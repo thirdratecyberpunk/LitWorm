@@ -1,11 +1,18 @@
 import pygame
 import random
+import numpy
+from numpy import loadtxt
 
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
             'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 
             'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 
             'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10}
+
+global VALID_WORD_COLOUR 
+VALID_WORD_COLOUR = (124,252,0)
+global INVALID_WORD_COLOUR 
+INVALID_WORD_COLOUR = (255,0,0)
 
 class Cell:
     def __init__(self):
@@ -28,6 +35,16 @@ pygame.display.set_caption("LitWorm")
 clicked_letters = []
 text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
 
+# loading text file of valid english words into memory
+lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
+print(lines)
+
+"""
+Returns whether a given string is found in the list of valid words
+"""
+def is_valid_word(word):
+    return (word in lines and len(word) > 2)
+
 run = True
 while run:
     clock.tick(100)
@@ -47,7 +64,11 @@ while run:
                 print(f"clicked {row}-{col}, letter {board[row][col].letter} with value {board[row][col].value}")
                 print(f"{clicked_letters}")
                 # updating label for selected text
-                text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
+                current_selected_word = ''.join(clicked_letters)
+                if (is_valid_word(current_selected_word)):
+                    text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
+                else:
+                    text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
     window.fill(0)
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
