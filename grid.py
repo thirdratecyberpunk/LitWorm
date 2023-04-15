@@ -1,6 +1,6 @@
 import pygame
 import pygame_widgets
-from pygame_widgets.button import Button
+from pygame_widgets.button import Button, ButtonArray
 
 import random
 import numpy
@@ -48,10 +48,17 @@ class Cell:
             clicked_letters.append(self.letter)
             self.clicked = True
 
-                        
+# class Board:
+#     def __init__(self, grid_x_size, grid_y_size):
+#         self.grid_x_size = grid_x_size
+#         self.grid_y_size = grid_y_size
+#         self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]                     
 
 grid_size = 4
+global board
 board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+
+# board = Board(grid_size, grid_size)
 
 pygame.init()
 window = pygame.display.set_mode((1000,1200))
@@ -72,8 +79,12 @@ def unclick_all_tiles():
     current_selected_word = ''
     text_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
 
+def generate_new_board():
+    global board
+    board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+
 # button to reset grid
-reset_button = Button(
+unselect_all_button = Button(
     window, # surface
     500, #x-coord of top left
     600, # y-coord of top left
@@ -87,6 +98,23 @@ reset_button = Button(
     pressedColour=(0, 200, 20),  # Colour of button when being clicked
     radius=20,  # Radius of border corners (leave empty for not curved)
     onClick=lambda:unclick_all_tiles()
+)
+
+# button to reset grid
+new_grid_button = Button(
+    window, # surface
+    200, #x-coord of top left
+    600, # y-coord of top left
+    200,
+    120,
+    text='New grid',
+    fontSize=50,  # Size of font
+    margin=20,  # Minimum distance between text/image and edge of button
+    inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+    pressedColour=(0, 200, 20),  # Colour of button when being clicked
+    radius=20,  # Radius of border corners (leave empty for not curved)
+    onClick=lambda:generate_new_board()
 )
 
 """
