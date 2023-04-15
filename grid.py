@@ -175,18 +175,18 @@ while run:
                 # this probably holds up horribly in stuff with an actual UI but it'll do for now
                 if (row < grid_size and col < grid_size):
                     board[row][col].update_click_state()
-                    # updating label for selected text
-                    current_selected_word = ''.join(clicked_letters)
-                    if (is_valid_word(current_selected_word)):
-                        text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
-                    else:
-                        text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
     window.fill((0,0,0))
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
             window.blit(cell.sprite, (ix * 120, iy * 120))
     window.blit(text_surface, (0,480))
     current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
+    # updating label for selected text
+    current_selected_word = ''.join(clicked_letters)
+    if (is_valid_word(current_selected_word)):
+        text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
+    else:
+        text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
     window.blit(current_score_surface, (100, 480))
     pygame_widgets.update(events)
     pygame.display.update()
