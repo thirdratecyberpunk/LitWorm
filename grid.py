@@ -66,13 +66,22 @@ my_font = pygame.font.SysFont('monospace', 30)
 logo = pygame.image.load("assets/logo.png")
 pygame.display.set_icon(logo)
 pygame.display.set_caption("LitWorm")
+global clicked_letters
 clicked_letters = []
+global current_score
+current_score = 0
+global current_score_surface
+current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
+global text_surface
 text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
 
 # loading text file of valid english words into memory
 lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
 
 def unclick_all_tiles():
+    """
+    Unclicks all tiles and clears selected word
+    """
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
             cell.set_unclicked()
@@ -80,8 +89,20 @@ def unclick_all_tiles():
     text_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
 
 def generate_new_board():
+    """
+    Generates a new board object and updates the contents
+    """
     global board
     board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+    global clicked_letters
+    clicked_letters = []
+
+def score_word():
+    global current_score
+    # check if the currently selected word is a valid word
+
+    # if it is, calculate the score as the base value by the multiplier
+    current_score += 1
 
 # button to reset grid
 unselect_all_button = Button(
@@ -117,6 +138,23 @@ new_grid_button = Button(
     onClick=lambda:generate_new_board()
 )
 
+# button to score current word
+new_grid_button = Button(
+    window, # surface
+    100, #x-coord of top left
+    600, # y-coord of top left
+    200,
+    120,
+    text='Score word',
+    fontSize=50,  # Size of font
+    margin=20,  # Minimum distance between text/image and edge of button
+    inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+    pressedColour=(0, 200, 20),  # Colour of button when being clicked
+    radius=20,  # Radius of border corners (leave empty for not curved)
+    onClick=lambda:score_word()
+)
+
 """
 Returns whether a given string is found in the list of valid words
 """
@@ -147,7 +185,9 @@ while run:
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
             window.blit(cell.sprite, (ix * 120, iy * 120))
-            window.blit(text_surface, (0,480))
+    window.blit(text_surface, (0,480))
+    current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
+    window.blit(current_score_surface, (100, 480))
     pygame_widgets.update(events)
     pygame.display.update()
 
