@@ -10,8 +10,8 @@ value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,
 class Cell:
     def __init__(self):
         self.clicked = False
-        self.value = 1
         self.letter  = random.choice(list(value_list.keys()))
+        self.value = value_list[self.letter]
         self.letterName = f"assets/letters/{self.letter}.png"
         self.sprite = pygame.image.load(self.letterName)
 
