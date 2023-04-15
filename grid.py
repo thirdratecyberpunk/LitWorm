@@ -1,4 +1,7 @@
 import pygame
+import pygame_widgets
+from pygame_widgets.button import Button
+
 import random
 import numpy
 from numpy import loadtxt
@@ -32,14 +35,26 @@ class Cell:
         else:
             self.sprite = pygame.image.load(self.letterName)
             clicked_letters.remove(self.letter)
+
+    def set_unclicked(self):
+        if self.clicked:
+            self.sprite = pygame.image.load(self.letterName)
+            clicked_letters.remove(self.letter)
+            self.clicked = False
+
+    def set_clicked(self):
+        if not self.clicked:
+            self.sprite = pygame.image.load(self.grayscaleLetterName)
+            clicked_letters.append(self.letter)
+            self.clicked = True
+
                         
 
 grid_size = 4
 board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
 
 pygame.init()
-window = pygame.display.set_mode((1920, 1080))
-clock = pygame.time.Clock()
+window = pygame.display.set_mode((1000,1200))
 my_font = pygame.font.SysFont('monospace', 30)
 logo = pygame.image.load("assets/logo.png")
 pygame.display.set_icon(logo)
@@ -50,6 +65,30 @@ text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
 # loading text file of valid english words into memory
 lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
 
+def unclick_all_tiles():
+    for iy, rowOfCells in enumerate(board):
+        for ix, cell in enumerate(rowOfCells):
+            cell.set_unclicked()
+    current_selected_word = ''
+    text_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
+
+# button to reset grid
+reset_button = Button(
+    window, # surface
+    500, #x-coord of top left
+    600, # y-coord of top left
+    200,
+    120,
+    text='Unselect all',
+    fontSize=50,  # Size of font
+    margin=20,  # Minimum distance between text/image and edge of button
+    inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+    pressedColour=(0, 200, 20),  # Colour of button when being clicked
+    radius=20,  # Radius of border corners (leave empty for not curved)
+    onClick=lambda:unclick_all_tiles()
+)
+
 """
 Returns whether a given string is found in the list of valid words
 """
@@ -58,8 +97,8 @@ def is_valid_word(word):
 
 run = True
 while run:
-    clock.tick(100)
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             run = False 
         if event.type == pygame.MOUSEBUTTONDOWN:    
@@ -76,12 +115,13 @@ while run:
                         text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
                     else:
                         text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
-    window.fill(0)
+    window.fill((0,0,0))
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
             window.blit(cell.sprite, (ix * 120, iy * 120))
             window.blit(text_surface, (0,480))
-    pygame.display.flip()
+    pygame_widgets.update(events)
+    pygame.display.update()
 
 pygame.quit()
 exit()
