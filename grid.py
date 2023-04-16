@@ -70,7 +70,11 @@ global clicked_letters
 clicked_letters = []
 global current_score
 current_score = 0
+global current_word_score
+current_word_score = 0
 global current_score_surface
+current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
+global current_word_score_surface
 current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
 global text_surface
 text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
@@ -85,7 +89,12 @@ def unclick_all_tiles():
     for iy, rowOfCells in enumerate(board):
         for ix, cell in enumerate(rowOfCells):
             cell.set_unclicked()
+    global clicked_letters
+    clicked_letters = []
+    global current_selected_word
     current_selected_word = ''
+    global current_word_score
+    current_word_score = 0
     text_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
 
 def generate_new_board():
@@ -97,12 +106,29 @@ def generate_new_board():
     global clicked_letters
     clicked_letters = []
 
+def get_word_score(word):
+    if is_valid_word(word):
+        return 5
+    else:
+        return 0
+
 def score_word():
     global current_score
     # check if the currently selected word is a valid word
-
     # if it is, calculate the score as the base value by the multiplier
-    current_score += 1
+    global current_selected_word
+    current_score += get_word_score(current_selected_word)
+    # remove all clicked tiles and repopulate the grid
+    row_count = 0
+    for row in board:
+        col_count = 0
+        for col in row:
+            if (col.clicked):
+                board[row_count][col_count] = Cell()
+            col_count += 1
+        row_count += 1
+    unclick_all_tiles()
+
 
 # button to reset grid
 unselect_all_button = Button(
@@ -124,7 +150,7 @@ unselect_all_button = Button(
 # button to reset grid
 new_grid_button = Button(
     window, # surface
-    200, #x-coord of top left
+    250, #x-coord of top left
     600, # y-coord of top left
     200,
     120,
@@ -141,7 +167,7 @@ new_grid_button = Button(
 # button to score current word
 new_grid_button = Button(
     window, # surface
-    100, #x-coord of top left
+    50, #x-coord of top left
     600, # y-coord of top left
     200,
     120,
@@ -187,7 +213,11 @@ while run:
         text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
     else:
         text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
+    # updating label for selected word score
+    current_word_score = get_word_score(current_selected_word)
+    current_word_score_surface = my_font.render(f"scores {str(current_word_score)} points", False, (255,255,255))
     window.blit(current_score_surface, (100, 480))
+    window.blit(current_word_score_surface, (200, 480))
     pygame_widgets.update(events)
     pygame.display.update()
 
