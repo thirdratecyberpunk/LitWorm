@@ -107,10 +107,11 @@ def generate_new_board():
     clicked_letters = []
 
 def get_word_score(word):
+    score = 0
     if is_valid_word(word):
-        return 5
-    else:
-        return 0
+        for letter in word:
+            score += value_list[letter]
+    return score
 
 def score_word():
     global current_score
