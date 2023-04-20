@@ -73,11 +73,11 @@ class Board:
         """
         return trie.get_all_words_from_set_of_letters(root=trie.root,letter_set=self.get_all_letters())
 
-    def get_new_hint(self):
+    def get_new_hints(self, num_hints=1):
         """
         Gets a random possible word given the board's current set of letters
         """
-        return random.sample(sorted(self.get_all_possible_words()),1)
+        return random.sample(sorted(self.get_all_possible_words()),num_hints)
 
 grid_size = 4
 global board
@@ -165,7 +165,7 @@ def clear_hint():
 
 def update_hint():
     global hint
-    hint = board.get_new_hint()
+    hint = board.get_new_hints(2)
     hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 # button to reset grid
