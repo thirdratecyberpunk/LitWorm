@@ -82,6 +82,16 @@ class Board:
         """
         return random.sample(sorted(self.get_all_possible_words()),num_hints)
     
+    def get_new_clicked_cells(self):
+        row_count = 0
+        for row in self.board:
+            col_count = 0
+            for col in row:
+                if (col.clicked):
+                    self.board[row_count][col_count] = Cell()
+                col_count += 1
+            row_count += 1
+
     def __str__(self):
         return str(self.get_all_letters())
 
@@ -155,13 +165,7 @@ def score_word():
     # remove all clicked tiles and repopulate the grid
     row_count = 0
     global board
-    for row in board.board:
-        col_count = 0
-        for col in row:
-            if (col.clicked):
-                board.board[row_count][col_count] = Cell()
-            col_count += 1
-        row_count += 1
+    board.get_new_clicked_cells()
     unclick_all_tiles()
     clear_hint()
 
