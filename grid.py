@@ -6,6 +6,8 @@ import random
 import numpy
 from numpy import loadtxt
 
+from trie_hashmaps import Trie
+
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
             'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 
@@ -16,6 +18,10 @@ global VALID_WORD_COLOUR
 VALID_WORD_COLOUR = (124,252,0)
 global INVALID_WORD_COLOUR 
 INVALID_WORD_COLOUR = (255,0,0)
+
+# importing the dictionary
+lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
+trie = Trie()
 
 class Cell:
     def __init__(self):
@@ -48,15 +54,22 @@ class Cell:
             clicked_letters.append(self.letter)
             self.clicked = True
 
-# class Board:
-#     def __init__(self, grid_x_size, grid_y_size):
-#         self.grid_x_size = grid_x_size
-#         self.grid_y_size = grid_y_size
-#         self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]                     
+class Board:
+    def __init__(self, grid_x_size=4, grid_y_size=4):
+        self.grid_x_size = grid_x_size
+        self.grid_y_size = grid_y_size
+        self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]
+
+    def get_all_letters():
+        letters = []
+        for row in board.board:
+            for column in row:
+                letters.append(column.letter)
+        return letters                    
 
 grid_size = 4
 global board
-board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+board = Board()
 
 # board = Board(grid_size, grid_size)
 
@@ -78,15 +91,17 @@ global current_word_score_surface
 current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
 global text_surface
 text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
+global hint
+hint = ""
+global hint_text_surface
+hint_text_surface =my_font.render(str(hint), False, (255, 255, 255))
 
-# loading text file of valid english words into memory
-lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
 
 def unclick_all_tiles():
     """
     Unclicks all tiles and clears selected word
     """
-    for iy, rowOfCells in enumerate(board):
+    for iy, rowOfCells in enumerate(board.board):
         for ix, cell in enumerate(rowOfCells):
             cell.set_unclicked()
     global clicked_letters
@@ -102,7 +117,7 @@ def generate_new_board():
     Generates a new board object and updates the contents
     """
     global board
-    board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+    board = Board()
     global clicked_letters
     clicked_letters = []
 
@@ -113,6 +128,12 @@ def get_word_score(word):
             score += value_list[letter]
     return score
 
+def get_new_hint():
+    """
+    Gets a random possible word
+    """
+    return trie.get_all_words_from_set_of_letters()
+
 def score_word():
     global current_score
     # check if the currently selected word is a valid word
@@ -121,11 +142,11 @@ def score_word():
     current_score += get_word_score(current_selected_word)
     # remove all clicked tiles and repopulate the grid
     row_count = 0
-    for row in board:
+    for row in board.board:
         col_count = 0
         for col in row:
             if (col.clicked):
-                board[row_count][col_count] = Cell()
+                board.board[row_count][col_count] = Cell()
             col_count += 1
         row_count += 1
     unclick_all_tiles()
@@ -201,9 +222,9 @@ while run:
                 # checking if clicked area is actually in the grid
                 # this probably holds up horribly in stuff with an actual UI but it'll do for now
                 if (row < grid_size and col < grid_size):
-                    board[row][col].update_click_state()
+                    board.board[row][col].update_click_state()
     window.fill((0,0,0))
-    for iy, rowOfCells in enumerate(board):
+    for iy, rowOfCells in enumerate(board.board):
         for ix, cell in enumerate(rowOfCells):
             window.blit(cell.sprite, (ix * 120, iy * 120))
     window.blit(text_surface, (0,480))
@@ -217,8 +238,10 @@ while run:
     # updating label for selected word score
     current_word_score = get_word_score(current_selected_word)
     current_word_score_surface = my_font.render(f"scores {str(current_word_score)} points", False, (255,255,255))
+    hint_text_surface = my_font.render(f"hint {hint}", False, (255,255,255))
     window.blit(current_score_surface, (100, 480))
     window.blit(current_word_score_surface, (200, 480))
+    window.blit(hint_text_surface, (500,500))
     pygame_widgets.update(events)
     pygame.display.update()
 
