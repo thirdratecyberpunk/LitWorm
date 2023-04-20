@@ -54,6 +54,9 @@ class Cell:
             clicked_letters.append(self.letter)
             self.clicked = True
 
+    def __str__(self):
+        return str(self.letter)
+
 class Board:
     def __init__(self, grid_x_size=4, grid_y_size=4):
         self.grid_x_size = grid_x_size
@@ -78,6 +81,9 @@ class Board:
         Gets a random possible word given the board's current set of letters
         """
         return random.sample(sorted(self.get_all_possible_words()),num_hints)
+    
+    def __str__(self):
+        return str(self.get_all_letters())
 
 grid_size = 4
 global board
@@ -148,6 +154,7 @@ def score_word():
     current_score += get_word_score(current_selected_word)
     # remove all clicked tiles and repopulate the grid
     row_count = 0
+    global board
     for row in board.board:
         col_count = 0
         for col in row:
