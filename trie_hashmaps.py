@@ -10,7 +10,7 @@ ALPHABET = list(string.ascii_lowercase)
 SIZE = len(ALPHABET)
 
 class Trie:
-    def __init__(self, filename="assets/words_alpha.txt"):
+    def __init__(self, filename="assets/words_sanitised.txt"):
         print("Loading dictionary...")
         self.dict = loadtxt(filename, dtype=str,comments="#", delimiter=",", unpack=False)
         print("Dictionary loaded!")
