@@ -1,6 +1,6 @@
 import pygame
 import pygame_widgets
-from pygame_widgets.button import Button, ButtonArray
+from pygame_widgets.button import Button
 
 import random
 import numpy
@@ -60,12 +60,24 @@ class Board:
         self.grid_y_size = grid_y_size
         self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]
 
-    def get_all_letters():
+    def get_all_letters(self):
         letters = []
         for row in board.board:
             for column in row:
                 letters.append(column.letter)
-        return letters                    
+        return letters
+
+    def get_all_possible_words(self):
+        """
+        Gets all possible answers for this grid
+        """
+        return trie.get_all_words_from_set_of_letters(root=trie.root,letter_set=self.get_all_letters())
+
+    def get_new_hint(self):
+        """
+        Gets a random possible word given the board's current set of letters
+        """
+        return random.sample(sorted(self.get_all_possible_words()),1)
 
 grid_size = 4
 global board
@@ -126,13 +138,7 @@ def get_word_score(word):
     if is_valid_word(word):
         for letter in word:
             score += value_list[letter]
-    return score
-
-def get_new_hint():
-    """
-    Gets a random possible word
-    """
-    return trie.get_all_words_from_set_of_letters()
+    return score    
 
 def score_word():
     global current_score
@@ -151,6 +157,10 @@ def score_word():
         row_count += 1
     unclick_all_tiles()
 
+def update_hint():
+    global hint
+    hint = board.get_new_hint()
+    hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 # button to reset grid
 unselect_all_button = Button(
@@ -187,7 +197,7 @@ new_grid_button = Button(
 )
 
 # button to score current word
-new_grid_button = Button(
+score_word_button = Button(
     window, # surface
     50, #x-coord of top left
     600, # y-coord of top left
@@ -201,6 +211,23 @@ new_grid_button = Button(
     pressedColour=(0, 200, 20),  # Colour of button when being clicked
     radius=20,  # Radius of border corners (leave empty for not curved)
     onClick=lambda:score_word()
+)
+
+# button to generate a hint for the given board
+generate_hint_button = Button(
+    window, # surface
+    600, #x-coord of top left
+    600, # y-coord of top left
+    200,
+    120,
+    text='Hint',
+    fontSize=50,  # Size of font
+    margin=20,  # Minimum distance between text/image and edge of button
+    inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+    pressedColour=(0, 200, 20),  # Colour of button when being clicked
+    radius=20,  # Radius of border corners (leave empty for not curved)
+    onClick=lambda:(update_hint())
 )
 
 """
