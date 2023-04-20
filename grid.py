@@ -20,7 +20,7 @@ global INVALID_WORD_COLOUR
 INVALID_WORD_COLOUR = (255,0,0)
 
 # importing the dictionary
-lines = loadtxt("assets/words_alpha.txt", dtype=str,comments="#", delimiter=",", unpack=False)
+lines = loadtxt("assets/words_sanitised.txt", dtype=str,comments="#", delimiter=",", unpack=False)
 trie = Trie()
 
 class Cell:
@@ -156,6 +156,12 @@ def score_word():
             col_count += 1
         row_count += 1
     unclick_all_tiles()
+    clear_hint()
+
+def clear_hint():
+    global hint
+    hint = ""
+    hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 def update_hint():
     global hint
