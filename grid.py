@@ -64,6 +64,9 @@ class Board:
         self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]
 
     def get_all_letters(self):
+        """
+        Returns a list of all letters for cells in the current board
+        """
         letters = []
         for row in board.board:
             for column in row:
@@ -72,7 +75,7 @@ class Board:
 
     def get_all_possible_words(self):
         """
-        Gets all possible answers for this grid
+        Gets all possible accepted words for this grid
         """
         return trie.get_all_words_from_set_of_letters(root=trie.root,letter_set=self.get_all_letters())
 
@@ -83,6 +86,9 @@ class Board:
         return random.sample(sorted(self.get_all_possible_words()),num_hints)
     
     def get_new_clicked_cells(self):
+        """
+        Replaces any clicked cells with new cells
+        """
         row_count = 0
         for row in self.board:
             col_count = 0
@@ -93,6 +99,9 @@ class Board:
             row_count += 1
 
     def __str__(self):
+        """
+        Stringified representation of the board
+        """
         return str(self.get_all_letters())
 
 grid_size = 4
