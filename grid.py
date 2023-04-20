@@ -19,8 +19,6 @@ VALID_WORD_COLOUR = (124,252,0)
 global INVALID_WORD_COLOUR 
 INVALID_WORD_COLOUR = (255,0,0)
 
-# importing the dictionary
-lines = loadtxt("assets/words_sanitised.txt", dtype=str,comments="#", delimiter=",", unpack=False)
 trie = Trie()
 
 class Cell:
@@ -160,7 +158,7 @@ def generate_new_board():
 
 def get_word_score(word):
     score = 0
-    if is_valid_word(word):
+    if trie.find(word):
         for letter in word:
             score += value_list[letter]
     return score    
@@ -256,12 +254,6 @@ generate_hint_button = Button(
     onClick=lambda:(update_hint())
 )
 
-"""
-Returns whether a given string is found in the list of valid words
-"""
-def is_valid_word(word):
-    return (word in lines and len(word) > 2)
-
 run = True
 while run:
     events = pygame.event.get()
@@ -284,7 +276,7 @@ while run:
     current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
     # updating label for selected text
     current_selected_word = ''.join(clicked_letters)
-    if (is_valid_word(current_selected_word)):
+    if (trie.find(current_selected_word)):
         text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
     else:
         text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)

@@ -35,6 +35,21 @@ class Trie:
         # make last node as leaf node
         p_child.leaf = True
 
+    def find(self, word):
+        """
+        Returns if a given word exists in the language trie
+        i.e. there is a valid leaf node
+        """
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                return None
+            current = current.children[char]
+
+        # New code, None returned implicitly if this is False
+        if current.leaf:
+            return current
+
     def get_all_words_from_set_of_letters(self, root, letter_set, words=set()):
         """
         Finds all words that can be constructed from a given
