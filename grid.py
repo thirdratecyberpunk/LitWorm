@@ -31,6 +31,8 @@ global VALID_WORD_COLOUR
 VALID_WORD_COLOUR = (124,252,0)
 global INVALID_WORD_COLOUR 
 INVALID_WORD_COLOUR = (255,0,0)
+global ENEMY_STATS_COLOUR 
+ENEMY_STATS_COLOUR = (255,255,0)
 
 # trie = Trie()
 # loading dictionary trie from pickle
@@ -149,6 +151,8 @@ global hint_text_surface
 hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 # enemy stats display
+global current_enemy_name_surface
+current_enemy_name_surface = my_font.render(enemy.name, False, (ENEMY_STATS_COLOUR))
 
 def unclick_all_tiles():
     """
@@ -313,6 +317,13 @@ while run:
     window.blit(current_score_surface, (100, 480))
     window.blit(current_word_score_surface, (200, 480))
     window.blit(hint_text_surface, (500,500))
+
+    # updating enemy information UI
+    current_enemy_name_surface = my_font.render(f"{enemy.name}", False, (ENEMY_STATS_COLOUR))
+    window.blit(current_enemy_name_surface, (300,300))
+    current_enemy_health_surface = my_font.render(f"{enemy.current_health}/{enemy.max_health}", False, (ENEMY_STATS_COLOUR))
+    window.blit(current_enemy_health_surface, (300,320))
+
     pygame_widgets.update(events)
     pygame.display.update()
 
