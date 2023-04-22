@@ -14,10 +14,12 @@ from enemy_factory import EnemyFactory
 from enemy import Enemy
 from roman_soldier import RomanSoldier
 from persian_soldier import PersianSoldier
+from minotaur import Minotaur
 
 factory = EnemyFactory()
 factory.register_enemy_type('ROMANSOLDIER', RomanSoldier())
 factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier())
+factory.register_enemy_type('MINOTAUR', Minotaur())
 
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
