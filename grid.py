@@ -10,9 +10,14 @@ import pickle
 
 from trie_hashmaps import Trie
 
+from enemy_factory import EnemyFactory
 from enemy import Enemy
 from roman_soldier import RomanSoldier
 from persian_soldier import PersianSoldier
+
+factory = EnemyFactory()
+factory.register_enemy_type('ROMANSOLDIER', RomanSoldier())
+factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier())
 
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
@@ -114,7 +119,7 @@ class Board:
 grid_size = 4
 global board
 board = Board()
-enemy = RomanSoldier()
+enemy = factory.create()
 
 # board = Board(grid_size, grid_size)
 
@@ -182,7 +187,7 @@ def score_word():
     enemy.deal_damage(get_word_score(current_selected_word))
     if enemy.is_dead():
         print(f"Defeated enemy!")
-        enemy = RomanSoldier()
+        enemy = factory.create()
     # remove all clicked tiles and repopulate the grid
     row_count = 0
     global board
@@ -197,7 +202,7 @@ def clear_hint():
 
 def update_hint():
     global hint
-    hint = board.get_new_hints(2)
+    hint = board.get_new_hints(1)
     hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 # button to reset grid
