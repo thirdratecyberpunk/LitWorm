@@ -17,9 +17,9 @@ from persian_soldier import PersianSoldier
 from minotaur import Minotaur
 
 factory = EnemyFactory()
-factory.register_enemy_type('ROMANSOLDIER', RomanSoldier())
-factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier())
-factory.register_enemy_type('MINOTAUR', Minotaur())
+factory.register_enemy_type('ROMANSOLDIER', RomanSoldier)
+factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier)
+factory.register_enemy_type('MINOTAUR', Minotaur)
 
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
@@ -123,14 +123,14 @@ global board
 board = Board()
 enemy = factory.create()
 
-# board = Board(grid_size, grid_size)
-
 pygame.init()
 window = pygame.display.set_mode((1000,1200))
 my_font = pygame.font.SysFont('monospace', 30)
 logo = pygame.image.load("assets/logo.png")
 pygame.display.set_icon(logo)
 pygame.display.set_caption("LitWorm")
+
+# player information display
 global clicked_letters
 clicked_letters = []
 global current_score
@@ -147,6 +147,8 @@ global hint
 hint = ""
 global hint_text_surface
 hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
+
+# enemy stats display
 
 def unclick_all_tiles():
     """

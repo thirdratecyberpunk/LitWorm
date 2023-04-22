@@ -20,4 +20,4 @@ class EnemyFactory:
         enemy_type = self._enemy_types.get(key)
         if not enemy_type:
             raise ValueError(key)
-        return enemy_type
+        return enemy_type()
