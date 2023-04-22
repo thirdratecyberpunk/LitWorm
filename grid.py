@@ -10,6 +10,10 @@ import pickle
 
 from trie_hashmaps import Trie
 
+from enemy import Enemy
+from roman_soldier import RomanSoldier
+from persian_soldier import PersianSoldier
+
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
             'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 
@@ -110,6 +114,7 @@ class Board:
 grid_size = 4
 global board
 board = Board()
+enemy = RomanSoldier()
 
 # board = Board(grid_size, grid_size)
 
@@ -129,13 +134,12 @@ global current_score_surface
 current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
 global current_word_score_surface
 current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
-global text_surface
-text_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
+global chosen_word_surface
+chosen_word_surface = my_font.render(''.join(clicked_letters), False, (255, 255, 255))
 global hint
 hint = ""
 global hint_text_surface
-hint_text_surface =my_font.render(str(hint), False, (255, 255, 255))
-
+hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 def unclick_all_tiles():
     """
@@ -150,7 +154,7 @@ def unclick_all_tiles():
     current_selected_word = ''
     global current_word_score
     current_word_score = 0
-    text_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
+    chosen_word_surface = my_font.render(''.join(clicked_letters), False, VALID_WORD_COLOUR)
 
 def generate_new_board():
     """
@@ -174,6 +178,11 @@ def score_word():
     # if it is, calculate the score as the base value by the multiplier
     global current_selected_word
     current_score += get_word_score(current_selected_word)
+    global enemy
+    enemy.deal_damage(get_word_score(current_selected_word))
+    if enemy.is_dead():
+        print(f"Defeated enemy!")
+        enemy = RomanSoldier()
     # remove all clicked tiles and repopulate the grid
     row_count = 0
     global board
@@ -274,17 +283,20 @@ while run:
                 if (row < grid_size and col < grid_size):
                     board.board[row][col].update_click_state()
     window.fill((0,0,0))
+    # drawing grid of letters
     for iy, rowOfCells in enumerate(board.board):
         for ix, cell in enumerate(rowOfCells):
             window.blit(cell.sprite, (ix * 120, iy * 120))
-    window.blit(text_surface, (0,480))
+    # drawing enemy
+    window.blit(enemy.sprite, (500,0))
+    window.blit(chosen_word_surface, (0,480))
     current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
     # updating label for selected text
     current_selected_word = ''.join(clicked_letters)
     if (trie.find(current_selected_word)):
-        text_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
+        chosen_word_surface = my_font.render(current_selected_word, False, VALID_WORD_COLOUR)
     else:
-        text_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
+        chosen_word_surface = my_font.render(current_selected_word, False, INVALID_WORD_COLOUR)
     # updating label for selected word score
     current_word_score = get_word_score(current_selected_word)
     current_word_score_surface = my_font.render(f"scores {str(current_word_score)} points", False, (255,255,255))
