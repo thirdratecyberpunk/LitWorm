@@ -6,6 +6,8 @@ import random
 import numpy
 from numpy import loadtxt
 
+import pickle
+
 from trie_hashmaps import Trie
 
 global value_list 
@@ -19,7 +21,10 @@ VALID_WORD_COLOUR = (124,252,0)
 global INVALID_WORD_COLOUR 
 INVALID_WORD_COLOUR = (255,0,0)
 
-trie = Trie()
+# trie = Trie()
+# loading dictionary trie from pickle
+with open('english_dictionary.txt', 'rb+') as file:
+    trie = pickle.load(file)
 
 class Cell:
     def __init__(self):
@@ -240,7 +245,7 @@ score_word_button = Button(
 # button to generate a hint for the given board
 generate_hint_button = Button(
     window, # surface
-    600, #x-coord of top left
+    750, #x-coord of top left
     600, # y-coord of top left
     200,
     120,
