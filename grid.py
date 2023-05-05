@@ -177,6 +177,8 @@ def generate_new_board():
     board = Board()
     global clicked_letters
     clicked_letters = []
+    global current_score
+    current_score = 0
 
 def get_word_score(word):
     score = 0
@@ -209,9 +211,13 @@ def clear_hint():
     hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
 
 def update_hint():
+    # generate new hint
     global hint
     hint = board.get_new_hints(1)
     hint_text_surface = my_font.render(str(hint), False, (255, 255, 255))
+    # clear player's current score
+    global current_score
+    current_score = 0
 
 # button to reset grid
 unselect_all_button = Button(
