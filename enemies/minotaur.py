@@ -1,5 +1,5 @@
 import pygame
-from enemy import Enemy
+from enemies.enemy import Enemy
 
 class Minotaur(Enemy):
     def __init__(self):

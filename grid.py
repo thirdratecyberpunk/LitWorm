@@ -8,13 +8,13 @@ from numpy import loadtxt
 
 import pickle
 
-from trie_hashmaps import Trie
+from trie import Trie
 
-from enemy_factory import EnemyFactory
-from enemy import Enemy
-from roman_soldier import RomanSoldier
-from persian_soldier import PersianSoldier
-from minotaur import Minotaur
+from enemies.enemy_factory import EnemyFactory
+from enemies.enemy import Enemy
+from enemies.roman_soldier import RomanSoldier
+from enemies.persian_soldier import PersianSoldier
+from enemies.minotaur import Minotaur
 
 factory = EnemyFactory()
 factory.register_enemy_type('ROMANSOLDIER', RomanSoldier)
@@ -34,10 +34,10 @@ INVALID_WORD_COLOUR = (255,0,0)
 global ENEMY_STATS_COLOUR 
 ENEMY_STATS_COLOUR = (255,255,0)
 
-# trie = Trie()
+trie = Trie()
 # loading dictionary trie from pickle
-with open('english_dictionary.txt', 'rb+') as file:
-    trie = pickle.load(file)
+# with open('assets/english_dictionary.txt', 'rb+') as file:
+#     trie = pickle.load(file)
 
 class Cell:
     def __init__(self):
