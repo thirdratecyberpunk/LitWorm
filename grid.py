@@ -16,6 +16,8 @@ from enemies.roman_soldier import RomanSoldier
 from enemies.persian_soldier import PersianSoldier
 from enemies.minotaur import Minotaur
 
+from players.player import Player
+
 factory = EnemyFactory()
 factory.register_enemy_type('ROMANSOLDIER', RomanSoldier)
 factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier)
@@ -33,6 +35,8 @@ global INVALID_WORD_COLOUR
 INVALID_WORD_COLOUR = (255,0,0)
 global ENEMY_STATS_COLOUR 
 ENEMY_STATS_COLOUR = (255,255,0)
+global PLAYER_STATS_COLOUR 
+PLAYER_STATS_COLOUR = (0,255,0)
 
 trie = Trie()
 # loading dictionary trie from pickle
@@ -124,6 +128,7 @@ grid_size = 4
 global board
 board = Board()
 enemy = factory.create()
+player = Player()
 
 pygame.init()
 window = pygame.display.set_mode((1000,1200))
@@ -305,9 +310,11 @@ while run:
     # drawing grid of letters
     for iy, rowOfCells in enumerate(board.board):
         for ix, cell in enumerate(rowOfCells):
-            window.blit(cell.sprite, (ix * 120, iy * 120))
+            window.blit(cell.sprite, (250 + (ix * 120), 600 + (iy * 120)))
+    # drawing player sprite
+    window.blit(player.sprite, (0,50))
     # drawing enemy
-    window.blit(enemy.sprite, (500,0))
+    window.blit(enemy.sprite, (500,50))
     window.blit(chosen_word_surface, (0,480))
     current_score_surface = my_font.render(str(current_score), False, (255, 255, 255))
     # updating label for selected text
@@ -324,11 +331,17 @@ while run:
     window.blit(current_word_score_surface, (200, 480))
     window.blit(hint_text_surface, (500,500))
 
+    # updating player information UI
+    player_name_surface = my_font.render(f"{player.name}", False, (PLAYER_STATS_COLOUR))
+    window.blit(player_name_surface, (0,0))
+    player_health_surface = my_font.render(f"{player.current_health}/{player.max_health}", False, (PLAYER_STATS_COLOUR))
+    window.blit(player_health_surface, (0,20))
+
     # updating enemy information UI
     current_enemy_name_surface = my_font.render(f"{enemy.name}", False, (ENEMY_STATS_COLOUR))
-    window.blit(current_enemy_name_surface, (300,300))
+    window.blit(current_enemy_name_surface, (900,0))
     current_enemy_health_surface = my_font.render(f"{enemy.current_health}/{enemy.max_health}", False, (ENEMY_STATS_COLOUR))
-    window.blit(current_enemy_health_surface, (300,320))
+    window.blit(current_enemy_health_surface, (900,20))
 
     pygame_widgets.update(events)
     pygame.display.update()
