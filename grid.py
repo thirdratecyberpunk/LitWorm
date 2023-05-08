@@ -44,19 +44,26 @@ trie = Trie()
 #     trie = pickle.load(file)
 
 class Cell:
-    def __init__(self):
+    """
+    Class representing a Tile the player can select to assemble words
+    """
+    def __init__(self, x, y):
         self.clicked = False
-        self.letter  = random.choice(list(value_list.keys()))
+        self.letter = random.choice(list(value_list.keys()))
         self.value = value_list[self.letter]
         self.multiplier = 1
         self.letterName = f"assets/vanilla_letters/{self.letter}.png"
         self.grayscaleLetterName = f"assets/grayscale_letters/{self.letter}.png"
         self.sprite = pygame.image.load(self.letterName)
+        self.rect = self.sprite.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
     def update_click_state(self):
         self.clicked = not (self.clicked)
         if self.clicked:
             self.sprite = pygame.image.load(self.grayscaleLetterName)
+            # TODO: move logic tracking clicked letters to Board
             clicked_letters.append(self.letter)
         else:
             self.sprite = pygame.image.load(self.letterName)
@@ -74,14 +81,33 @@ class Cell:
             clicked_letters.append(self.letter)
             self.clicked = True
 
+    def check_click(self, mouse_position):
+        """
+        Returns whether the current mouse position is colliding with hitbox
+        """
+        return pygame.Rect.collidepoint(self.rect, mouse_position)
+
     def __str__(self):
         return str(self.letter)
 
 class Board:
-    def __init__(self, grid_x_size=4, grid_y_size=4):
+    """
+    Class representing a collection of Cell objects
+    grid_x_size -- number of columns of Cell objects
+    grid_y_size -- number of rows of Cell objects
+    start_x_pos -- x position on the screen where the Cells should start drawing from
+    start_y_pos -- y position on the screen where the Cells should start drawing from
+    """
+    def __init__(self,
+                grid_x_size=4,
+                grid_y_size=4, 
+                start_x_pos=250, 
+                start_y_pos=600):
         self.grid_x_size = grid_x_size
         self.grid_y_size = grid_y_size
-        self.board = [[Cell() for _ in range(self.grid_x_size)] for _ in range(self.grid_y_size)]
+        self.start_x_pos = start_x_pos
+        self.start_y_pos = start_y_pos
+        self.board = [[Cell(self.start_x_pos + (120 * x), start_y_pos + (120 * y)) for x in range(self.grid_x_size)] for y in range(self.grid_y_size)]
 
     def get_all_letters(self):
         """
@@ -114,7 +140,7 @@ class Board:
             col_count = 0
             for col in row:
                 if (col.clicked):
-                    self.board[row_count][col_count] = Cell()
+                    self.board[row_count][col_count] = Cell(self.start_x_pos + (120 * col_count), self.start_y_pos + (120 * row_count))
                 col_count += 1
             row_count += 1
 
@@ -300,12 +326,13 @@ while run:
             run = False 
         if event.type == pygame.MOUSEBUTTONDOWN:    
             if event.button == 1:
-                row = event.pos[1] // 120
-                col = event.pos[0] // 120
-                # checking if clicked area is actually in the grid
-                # this probably holds up horribly in stuff with an actual UI but it'll do for now
-                if (row < grid_size and col < grid_size):
-                    board.board[row][col].update_click_state()
+                print(event.pos)
+                # checking if any of the Cells have been clicked
+                for row in board.board:
+                    for cell in row:
+                        if cell.check_click(event.pos):
+                            cell.update_click_state()
+
     window.fill((0,0,0))
     # drawing grid of letters
     for iy, rowOfCells in enumerate(board.board):
