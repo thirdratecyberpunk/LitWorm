@@ -253,7 +253,7 @@ def update_hint():
 # button to reset grid
 unselect_all_button = Button(
     window, # surface
-    500, #x-coord of top left
+    50, #x-coord of top left
     600, # y-coord of top left
     200,
     120,
@@ -270,8 +270,8 @@ unselect_all_button = Button(
 # button to reset grid
 new_grid_button = Button(
     window, # surface
-    250, #x-coord of top left
-    600, # y-coord of top left
+    50, #x-coord of top left
+    750, # y-coord of top left
     200,
     120,
     text='New grid',
@@ -288,7 +288,7 @@ new_grid_button = Button(
 score_word_button = Button(
     window, # surface
     50, #x-coord of top left
-    600, # y-coord of top left
+    900, # y-coord of top left
     200,
     120,
     text='Score word',
@@ -304,8 +304,8 @@ score_word_button = Button(
 # button to generate a hint for the given board
 generate_hint_button = Button(
     window, # surface
-    750, #x-coord of top left
-    600, # y-coord of top left
+    50, #x-coord of top left
+    1050, # y-coord of top left
     200,
     120,
     text='Hint',
@@ -326,7 +326,6 @@ while run:
             run = False 
         if event.type == pygame.MOUSEBUTTONDOWN:    
             if event.button == 1:
-                print(event.pos)
                 # checking if any of the Cells have been clicked
                 for row in board.board:
                     for cell in row:
@@ -354,9 +353,9 @@ while run:
     current_word_score = get_word_score(current_selected_word)
     current_word_score_surface = my_font.render(f"scores {str(current_word_score)} points", False, (255,255,255))
     hint_text_surface = my_font.render(f"hint {hint}", False, (255,255,255))
-    window.blit(current_score_surface, (100, 480))
-    window.blit(current_word_score_surface, (200, 480))
-    window.blit(hint_text_surface, (500,500))
+    window.blit(current_score_surface, (100, 550))
+    window.blit(current_word_score_surface, (200, 550))
+    window.blit(hint_text_surface, (500, 550))
 
     # updating player information UI
     player_name_surface = my_font.render(f"{player.name}", False, (PLAYER_STATS_COLOUR))
