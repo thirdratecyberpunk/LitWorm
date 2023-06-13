@@ -1,0 +1,5 @@
+test
+dictionary
+words
+battle
+sword
