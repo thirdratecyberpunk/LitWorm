@@ -18,16 +18,23 @@ from enemies.minotaur import Minotaur
 
 from players.player import Player
 
-factory = EnemyFactory()
-factory.register_enemy_type('ROMANSOLDIER', RomanSoldier)
-factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier)
-factory.register_enemy_type('MINOTAUR', Minotaur)
+from cells.cell import Cell
+from cells.cell_factory import CellFactory
+
+enemy_factory = EnemyFactory()
+enemy_factory.register_enemy_type('ROMANSOLDIER', RomanSoldier)
+enemy_factory.register_enemy_type('PERSIANSOLDIER', PersianSoldier)
+enemy_factory.register_enemy_type('MINOTAUR', Minotaur)
 
 global value_list 
 value_list = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 
             'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 
             'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 
             'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10}
+
+cell_factory = CellFactory()
+for entry in value_list.items():
+    cell_factory.register_cell_type(entry[0], entry[1])
 
 global VALID_WORD_COLOUR 
 VALID_WORD_COLOUR = (124,252,0)
@@ -38,57 +45,7 @@ ENEMY_STATS_COLOUR = (255,255,0)
 global PLAYER_STATS_COLOUR 
 PLAYER_STATS_COLOUR = (0,255,0)
 
-trie = Trie()
-# loading dictionary trie from pickle
-# with open('assets/english_dictionary.txt', 'rb+') as file:
-#     trie = pickle.load(file)
-
-class Cell:
-    """
-    Class representing a Tile the player can select to assemble words
-    """
-    def __init__(self, x, y):
-        self.clicked = False
-        self.letter = random.choice(list(value_list.keys()))
-        self.value = value_list[self.letter]
-        self.multiplier = 1
-        self.letterName = f"assets/vanilla_letters/{self.letter}.png"
-        self.grayscaleLetterName = f"assets/grayscale_letters/{self.letter}.png"
-        self.sprite = pygame.image.load(self.letterName)
-        self.rect = self.sprite.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
-    def update_click_state(self):
-        self.clicked = not (self.clicked)
-        if self.clicked:
-            self.sprite = pygame.image.load(self.grayscaleLetterName)
-            # TODO: move logic tracking clicked letters to Board
-            clicked_letters.append(self.letter)
-        else:
-            self.sprite = pygame.image.load(self.letterName)
-            clicked_letters.remove(self.letter)
-
-    def set_unclicked(self):
-        if self.clicked:
-            self.sprite = pygame.image.load(self.letterName)
-            clicked_letters.remove(self.letter)
-            self.clicked = False
-
-    def set_clicked(self):
-        if not self.clicked:
-            self.sprite = pygame.image.load(self.grayscaleLetterName)
-            clicked_letters.append(self.letter)
-            self.clicked = True
-
-    def check_click(self, mouse_position):
-        """
-        Returns whether the current mouse position is colliding with hitbox
-        """
-        return pygame.Rect.collidepoint(self.rect, mouse_position)
-
-    def __str__(self):
-        return str(self.letter)
+trie = Trie("assets/words_small.txt")
 
 class Board:
     """
@@ -107,7 +64,7 @@ class Board:
         self.grid_y_size = grid_y_size
         self.start_x_pos = start_x_pos
         self.start_y_pos = start_y_pos
-        self.board = [[Cell(self.start_x_pos + (120 * x), start_y_pos + (120 * y)) for x in range(self.grid_x_size)] for y in range(self.grid_y_size)]
+        self.board = [[cell_factory.create(self.start_x_pos + (120 * x), start_y_pos + (120 * y)) for x in range(self.grid_x_size)] for y in range(self.grid_y_size)]
 
     def get_all_letters(self):
         """
@@ -153,7 +110,7 @@ class Board:
 grid_size = 4
 global board
 board = Board()
-enemy = factory.create()
+enemy = enemy_factory.create()
 player = Player()
 
 pygame.init()
@@ -228,7 +185,7 @@ def score_word():
     enemy.deal_damage(get_word_score(current_selected_word))
     if enemy.is_dead():
         print(f"Defeated enemy!")
-        enemy = factory.create()
+        enemy = enemy_factory.create()
     # remove all clicked tiles and repopulate the grid
     row_count = 0
     global board
